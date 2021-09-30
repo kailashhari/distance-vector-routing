@@ -1,36 +1,42 @@
-import time
-import math
+import pygame as pg
+from RoutingTable import RoutingTable
+
+from Packet import Packet
 
 pkts = dict()
+
+radius = 50
+
 nodes = list()
 
 max_time = 20
 
 
-def make_packet(source, dest, vector):
-    packet = dict()
-    packet["source"] = source
-    packet["dest"] = dest
-    packet["vector"] = vector
-    return packet
+def get_max_time():
+    return max_time
 
 
 class Router:
     routers = 0
 
-    def __init__(self):
+    def __init__(self, x, y, color):
         self.id = Router.routers
         Router.routers += 1
-        self.vector = [9999] * Router.routers
+        self.vector = [49] * Router.routers
         self.hops = ["-"] * Router.routers
         self.vector[self.id] = 0
         self.hops[self.id] = self.id
         self.neighbors = list()
         self.links = dict()
         self.packets = dict()
+        self.x = x
+        self.y = y
+        self.color = color
+        self.radius = radius
+        self.rt = RoutingTable(self)
 
     def init_again(self):
-        self.vector = [9999] * Router.routers
+        self.vector = [49] * Router.routers
         self.vector[self.id] = 0
         self.hops = ["-"] * Router.routers
         self.hops[self.id] = self.id
@@ -44,13 +50,13 @@ class Router:
         self.links[router.id] = cost
 
     def new_route(self):
-        self.vector.append(9999)
+        self.vector.append(49)
         self.hops.append("-")
 
     def send_packet(self, time_now):
         for neighbour in self.neighbors:
             id = neighbour.id
-            packet = make_packet(self.id, id, self.vector)
+            packet = Packet(self, neighbour, self.vector, time_now)
             global max_time
             max_time = max(max_time, time_now + self.links[id] + 2)
 
@@ -103,7 +109,7 @@ class Router:
 
     def remove_link(self, router, time_now):
         print("Link removed from {} to {}".format(self.id, router.id))
-        self.vector[router.id] = 9999
+        self.vector[router.id] = 49
         self.hops[router.id] = "-"
         self.neighbors.remove(router)
         self.links.pop(router.id)
@@ -115,10 +121,72 @@ class Router:
         for i in range(Router.routers):
             print(self.id, "->", i, ":", self.vector[i], "via", self.hops[i])
 
+    def draw_links(self, screen):
+        for neighbour in self.neighbors:
+            pg.draw.line(
+                screen,
+                (240, 242, 245),
+                (self.x, self.y),
+                (
+                    neighbour.x,
+                    neighbour.y,
+                ),
+                10,
+            )
+            font = pg.font.Font("freesansbold.ttf", 32)
+            text = font.render(
+                str(self.links[neighbour.id]), True, (240, 242, 245), (0, 2, 5)
+            )
+            textRect = text.get_rect()
+            textRect.center = (
+                (self.x + neighbour.x) / 2 + 25,
+                (self.y + neighbour.y) / 2 + 25,
+            )
+            screen.blit(text, textRect)
 
-def link_nodes(node1, node2, cost):
-    node1.add_link(node2, cost)
-    node2.add_link(node1, cost)
+    def draw(self, screen):
+        pg.draw.circle(screen, self.color, (self.x, self.y), radius, 0)
+        font = pg.font.Font("freesansbold.ttf", 40)
+        text = font.render(str(self.id), True, (255, 255, 255), self.color)
+        textRect = text.get_rect()
+        textRect.center = (self.x, self.y)
+        screen.blit(text, textRect)
+        self.rt.draw(screen, self)
+
+
+colors = [
+    (10, 74, 240, 0.8),
+    (14, 229, 21, 0.8),
+    (103, 10, 240, 0.8),
+    (240, 161, 10, 0.8),
+    (240, 31, 10, 0.8),
+    (210, 60, 138, 0.8),
+]
+
+position = [
+    (650, 200),
+    (650, 500),
+    (1250, 500),
+    (1250, 200),
+    (1250, 800),
+    (650, 800),
+]
+
+# Initialise routers
+def init_nodes():
+    for i in range(6):
+        [node.new_route() for node in nodes]
+        nodes.append(Router(position[i][0], position[i][1], colors[i]))
+
+    def link_nodes(node1, node2, cost):
+        node1.add_link(node2, cost)
+        node2.add_link(node1, cost)
+
+    link_nodes(nodes[0], nodes[1], 5)
+    link_nodes(nodes[1], nodes[2], 3)
+    link_nodes(nodes[2], nodes[5], 6)
+    link_nodes(nodes[2], nodes[4], 4)
+    link_nodes(nodes[2], nodes[3], 7)
 
 
 def remove_link(node1, node2, time_now):
@@ -126,65 +194,17 @@ def remove_link(node1, node2, time_now):
     node2.remove_link(node1, time_now)
 
 
-def link_cost(node1, node2):
-    return node1.vector[node2.id]
-
-
-def main():
-
-    # Initialise routers
-    for i in range(6):
-        [node.new_route() for node in nodes]
-        nodes.append(Router())
-
-    # Add links
-    link_nodes(nodes[0], nodes[1], 5)
-    link_nodes(nodes[1], nodes[2], 3)
-    link_nodes(nodes[2], nodes[5], 6)
-    link_nodes(nodes[2], nodes[4], 4)
-    link_nodes(nodes[2], nodes[3], 7)
-
-    t_start = time.time()
-
-    def receive_packet(packet, time_now):
-        dest = packet["dest"]
-        node = nodes[dest]
-        node.recv_packet(packet, time_now)
-
-    def sendpkt_initial(time_now):
-        for node in nodes:
-            for neighbour in node.neighbors:
-                packet = make_packet(node.id, neighbour.id, node.vector)
-                if time_now + node.links[neighbour.id] in pkts.keys():
-                    pkts[time_now + node.links[neighbour.id]].append(packet)
-                else:
-                    pkts[time_now + node.links[neighbour.id]] = [packet]
-
-    sendpkt_initial(0)
-
-    print("Packet Sent to all routers from their neighbours")
-
-    times = set()
-
-    while 1:
-        time_now = time.time() - t_start
-        if math.floor(time_now) not in times:
-            times.add(math.floor(time_now))
-            if time_now in pkts.keys():
-                print("At time {}".format(time_now))
-                for k in pkts[time_now]:
-                    receive_packet(k, time_now)
-            if t_start + max_time < time.time():
-                print(
-                    "At time {} all packets are sent and stabity established".format(
-                        time_now - 2
-                    )
-                )
-                break
-
+def sendpkt_initial(time_now):
     for node in nodes:
-        node.print_details()
+        for neighbour in node.neighbors:
+            packet = Packet(node, neighbour, node.vector, 0)
+            if time_now + node.links[neighbour.id] in pkts.keys():
+                pkts[time_now + node.links[neighbour.id]].append(packet)
+            else:
+                pkts[time_now + node.links[neighbour.id]] = [packet]
 
 
-if __name__ == "__main__":
-    main()
+def receive_packet(packet, time_now):
+    dest = packet["dest"]
+    node = nodes[dest]
+    node.recv_packet(packet, time_now)

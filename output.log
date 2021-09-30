@@ -161,7 +161,7 @@ At time 21.0
 Packet received from 3 at 2
 All packets received by 2
 No changes in routing table for 2
-At time 21.000000476837158 all packets are sent and stabity established
+At time 21.0 all packets are sent and stabity established
 Node: 0
 0 -> 0 : 0 via 0
 0 -> 1 : 5 via 1
