@@ -27,3 +27,13 @@ class Packet:
             20,
             20,
         )
+        pg.draw.circle(
+            screen,
+            (255, 255, 255),
+            (
+                self.source.x + self.speed[0] * (time - self.start_time),
+                self.source.y + self.speed[1] * (time - self.start_time),
+            ),
+            20,
+            5,
+        )

@@ -18,13 +18,13 @@ class RoutingTable:
 
     def draw(self, screen, node):
         pg.draw.rect(screen, self.color, pg.Rect(self.x, self.y, width, height), 5)
-        for i in range(1, 6):
+        for i in range(1, 7):
             pg.draw.line(
                 screen,
                 self.color,
-                (self.x + width / 6 * i, self.y),
-                (self.x + width / 6 * i, self.y + height),
-                3,
+                (self.x + width / 7 * i, self.y),
+                (self.x + width / 7 * i, self.y + height),
+                1,
             )
         for i in range(1, 3):
             pg.draw.line(
@@ -32,32 +32,44 @@ class RoutingTable:
                 self.color,
                 (self.x, self.y + height / 3 * i),
                 (self.x + width, self.y + height / 3 * i),
-                1,
+                3,
             )
-        font = pg.font.Font("freesansbold.ttf", 22)
-        for i in range(0, 6):
-            text = font.render(str(i), True, self.color, (0, 2, 5))
+        font = pg.font.Font("freesansbold.ttf", 32)
+        text = font.render("N", True, (255, 255, 255), (0, 2, 5))
+        textRect = text.get_rect()
+        textRect.center = (self.x + width / 14, self.y + height / 6)
+        screen.blit(text, textRect)
+        for i in range(1, 7):
+            text = font.render(str(i - 1), True, (255, 255, 255), (0, 2, 5))
             textRect = text.get_rect()
-            textRect.center = (self.x + width / 6 * i + width / 12, self.y + height / 6)
+            textRect.center = (self.x + width / 7 * i + width / 14, self.y + height / 6)
             screen.blit(text, textRect)
 
-        for i in range(0, 6):
-            val = node.vector[i]
+        text = font.render("D", True, (255, 255, 255), (0, 2, 5))
+        textRect = text.get_rect()
+        textRect.center = (self.x + width / 14, self.y + 3 * height / 6)
+        screen.blit(text, textRect)
+        for i in range(1, 7):
+            val = node.vector[i - 1]
             if val == 49:
                 val = "Inf"
-            text = font.render(str(val), True, self.color, (0, 2, 5))
+            text = font.render(str(val), True, (255, 255, 255), (0, 2, 5))
             textRect = text.get_rect()
             textRect.center = (
-                self.x + width / 6 * i + width / 12,
+                self.x + width / 7 * i + width / 14,
                 self.y + 3 * height / 6,
             )
             screen.blit(text, textRect)
 
-        for i in range(0, 6):
-            text = font.render(str(node.hops[i]), True, self.color, (0, 2, 5))
+        text = font.render("H", True, (255, 255, 255), (0, 2, 5))
+        textRect = text.get_rect()
+        textRect.center = (self.x + width / 14, self.y + 5 * height / 6)
+        screen.blit(text, textRect)
+        for i in range(1, 7):
+            text = font.render(str(node.hops[i - 1]), True, (255, 255, 255), (0, 2, 5))
             textRect = text.get_rect()
             textRect.center = (
-                self.x + width / 6 * i + width / 12,
+                self.x + width / 7 * i + width / 14,
                 self.y + 5 * height / 6,
             )
             screen.blit(text, textRect)
