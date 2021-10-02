@@ -45,7 +45,7 @@ class Router:
 
     def add_link(self, router, cost):
         self.vector[router.id] = cost
-        self.hops[router.id] = self.id
+        self.hops[router.id] = router.id
         self.neighbors.append(router)
         self.links[router.id] = cost
 
@@ -56,7 +56,7 @@ class Router:
     def send_packet(self, time_now):
         for neighbour in self.neighbors:
             id = neighbour.id
-            packet = Packet(self, neighbour, self.vector, time_now)
+            packet = Packet(self, neighbour, self.vector, self.hops, time_now)
             global max_time
             max_time = max(max_time, time_now + self.links[id] + 2)
 
@@ -114,7 +114,8 @@ class Router:
         self.hops[router.id] = "-"
         self.neighbors.remove(router)
         self.links.pop(router.id)
-        self.packets.pop(router.id)
+        if router.id in self.packets.keys():
+            self.packets.pop(router.id)
         self.send_packet(time_now)
 
     def print_details(self):
@@ -195,6 +196,20 @@ def remove_link(node1, node2, time_now):
     node1.remove_link(node2, time_now)
     node2.remove_link(node1, time_now)
 
+    for t in pkts.keys():
+        pk = pkts[t].copy()
+        for packet in pk:
+            if (
+                packet.packet["source"] == node1.id
+                and packet.packet["dest"] == node2.id
+            ):
+                pkts[t].remove(packet)
+            if (
+                packet.packet["source"] == node2.id
+                and packet.packet["dest"] == node1.id
+            ):
+                pkts[t].remove(packet)
+
 
 def add_link(node1, node2, cost, time_now):
     node1.add_link(node2, cost)
@@ -206,7 +221,7 @@ def add_link(node1, node2, cost, time_now):
 def sendpkt_initial(time_now):
     for node in nodes:
         for neighbour in node.neighbors:
-            packet = Packet(node, neighbour, node.vector, 0)
+            packet = Packet(node, neighbour, node.vector, node.hops, 0)
             if time_now + node.links[neighbour.id] in pkts.keys():
                 pkts[time_now + node.links[neighbour.id]].append(packet)
             else:

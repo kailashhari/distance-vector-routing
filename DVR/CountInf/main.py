@@ -116,7 +116,7 @@ while running:
 
             pkts.pop(time_now)
 
-        if time_now == 25:
+        if time_now == 10:
             remove_link(nodes[2], nodes[1], time_now)
 
         # end of simulation

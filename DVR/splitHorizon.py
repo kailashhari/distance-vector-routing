@@ -6,12 +6,21 @@ nodes = list()
 
 max_time = 20
 
+inf = 9999
 
-def make_packet(source, dest, vector):
+
+def make_packet(source, dest, vector, hops):
     packet = dict()
     packet["source"] = source
     packet["dest"] = dest
-    packet["vector"] = vector
+
+    new_vector = vector.copy()
+
+    for i in range(len(hops)):
+        if hops[i] == dest:
+            new_vector[i] = inf
+
+    packet["vector"] = new_vector
     return packet
 
 
@@ -21,7 +30,7 @@ class Router:
     def __init__(self):
         self.id = Router.routers
         Router.routers += 1
-        self.vector = [9999] * Router.routers
+        self.vector = [inf] * Router.routers
         self.hops = ["-"] * Router.routers
         self.vector[self.id] = 0
         self.hops[self.id] = self.id
@@ -30,7 +39,7 @@ class Router:
         self.packets = dict()
 
     def init_again(self):
-        self.vector = [9999] * Router.routers
+        self.vector = [inf] * Router.routers
         self.vector[self.id] = 0
         self.hops = ["-"] * Router.routers
         self.hops[self.id] = self.id
@@ -39,18 +48,18 @@ class Router:
 
     def add_link(self, router, cost):
         self.vector[router.id] = cost
-        self.hops[router.id] = self.id
+        self.hops[router.id] = router.id
         self.neighbors.append(router)
         self.links[router.id] = cost
 
     def new_route(self):
-        self.vector.append(9999)
+        self.vector.append(inf)
         self.hops.append("-")
 
     def send_packet(self, time_now):
         for neighbour in self.neighbors:
             id = neighbour.id
-            packet = make_packet(self.id, id, self.vector)
+            packet = make_packet(self.id, id, self.vector, self.hops)
             global max_time
             max_time = max(max_time, time_now + self.links[id] + 2)
 
@@ -104,7 +113,7 @@ class Router:
 
     def remove_link(self, router, time_now):
         print("Link removed from {} to {}".format(self.id, router.id))
-        self.vector[router.id] = 9999
+        self.vector[router.id] = inf
         self.hops[router.id] = "-"
         self.neighbors.remove(router)
         self.links.pop(router.id)
@@ -155,7 +164,7 @@ def main():
     def sendpkt_initial(time_now):
         for node in nodes:
             for neighbour in node.neighbors:
-                packet = make_packet(node.id, neighbour.id, node.vector)
+                packet = make_packet(node.id, neighbour.id, node.vector, node.hops)
                 if time_now + node.links[neighbour.id] in pkts.keys():
                     pkts[time_now + node.links[neighbour.id]].append(packet)
                 else:
