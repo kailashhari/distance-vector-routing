@@ -1,9 +1,10 @@
 import pygame as pg
 import math
 
-width = 450
+scale_down = 0.7
+width = int(450 * scale_down)
 
-height = 200
+height = int(200 * scale_down)
 
 color = (0, 0, 0)
 
@@ -35,7 +36,7 @@ class RoutingTable:
                 (self.x + width, self.y + height / 3 * i),
                 3,
             )
-        font = pg.font.Font("freesansbold.ttf", 32)
+        font = pg.font.Font("freesansbold.ttf", int(32 * scale_down))
         text = font.render("N", True, (255, 255, 255), (0, 2, 5))
         textRect = text.get_rect()
         textRect.center = (self.x + width / 14, self.y + height / 6)

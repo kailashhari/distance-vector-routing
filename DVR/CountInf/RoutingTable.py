@@ -1,19 +1,20 @@
 import pygame as pg
 
-width = 450
+scale_down = 0.7
+width = int(450 * scale_down)
 
-height = 200
+height = int(200 * scale_down)
 
 color = (0, 0, 0)
 
 
 class RoutingTable:
     def __init__(self, node):
-        if node.x == 650:
-            self.x = 50
+        if node.x == int(650 * scale_down):
+            self.x = int(50 * scale_down)
         else:
-            self.x = 1400
-        self.y = node.y - 100
+            self.x = int(1400 * scale_down)
+        self.y = node.y - int(100 * scale_down)
         self.color = node.color
 
     def draw(self, screen, node):
@@ -34,7 +35,7 @@ class RoutingTable:
                 (self.x + width, self.y + height / 3 * i),
                 3,
             )
-        font = pg.font.Font("freesansbold.ttf", 32)
+        font = pg.font.Font("freesansbold.ttf", int(32 * scale_down))
         text = font.render("N", True, (255, 255, 255), (0, 2, 5))
         textRect = text.get_rect()
         textRect.center = (self.x + width / 14, self.y + height / 6)

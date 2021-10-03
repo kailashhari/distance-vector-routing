@@ -5,6 +5,7 @@ import pygame as pg
 
 from Packet import Packet
 
+scale_down = 0.7
 max_time = 100
 expiry = 30
 
@@ -12,7 +13,7 @@ nodes = list()
 
 pkts = dict()
 
-radius = 50
+radius = int(50 * scale_down)
 
 
 def get_max_time():
@@ -168,7 +169,7 @@ class Router:
                 ),
                 10,
             )
-            font = pg.font.Font("freesansbold.ttf", 32)
+            font = pg.font.Font("freesansbold.ttf", int(32 * scale_down))
             text = font.render(
                 str(self.neighbors[neighbour]), True, (240, 242, 245), (0, 2, 5)
             )
@@ -225,12 +226,12 @@ colors = [
 ]
 
 position = [
-    (650, 150),
-    (650, 450),
-    (1250, 450),
-    (1250, 150),
-    (1250, 750),
-    (650, 750),
+    (int(650 * scale_down), int(150 * scale_down)),
+    (int(650 * scale_down), int(450 * scale_down)),
+    (int(1250 * scale_down), int(450 * scale_down)),
+    (int(1250 * scale_down), int(150 * scale_down)),
+    (int(1250 * scale_down), int(750 * scale_down)),
+    (int(650 * scale_down), int(750 * scale_down)),
 ]
 
 # Initialise routers

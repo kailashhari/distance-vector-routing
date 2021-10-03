@@ -5,6 +5,8 @@ import threading
 
 from pygame.constants import K_SPACE
 
+scale_down = 0.7
+
 
 def set_interval(func, sec):
     def func_wrapper():
@@ -31,8 +33,8 @@ from Node import (
 pg.init()
 
 # set screen size
-screen_width = 1920
-screen_height = 1080
+screen_width = int(1920 * scale_down)
+screen_height = int(1080 * scale_down)
 screen = pg.display.set_mode([screen_width, screen_height])
 
 # frames per second setting
@@ -128,26 +130,26 @@ while running:
             )
             break
 
-    font = pg.font.Font("freesansbold.ttf", 40)
+    font = pg.font.Font("freesansbold.ttf", int(40 * scale_down))
     flex = "A Project By"
     text = font.render(flex, True, (10, 74, 240, 0.8), (0, 2, 5))
     textRect = text.get_rect()
-    textRect.center = (screen_width / 2, 760)
+    textRect.center = (screen_width / 2, int(760 * scale_down))
     screen.blit(text, textRect)
 
     text = font.render("H.Kailash - 106119050", True, (14, 229, 21, 0.8), (0, 2, 5))
     textRect = text.get_rect()
-    textRect.center = (screen_width / 2, 810)
+    textRect.center = (screen_width / 2, int(810 * scale_down))
     screen.blit(text, textRect)
 
     text = font.render("&", True, (240, 161, 10, 0.8), (0, 2, 5))
     textRect = text.get_rect()
-    textRect.center = (screen_width / 2, 860)
+    textRect.center = (screen_width / 2, int(860 * scale_down))
     screen.blit(text, textRect)
 
     text = font.render("Indresh.P - 106119052", True, (240, 31, 10, 0.8), (0, 2, 5))
     textRect = text.get_rect()
-    textRect.center = (screen_width / 2, 910)
+    textRect.center = (screen_width / 2, int(910 * scale_down))
     screen.blit(text, textRect)
 
     # update screen

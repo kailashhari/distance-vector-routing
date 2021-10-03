@@ -3,9 +3,10 @@ from RoutingTable import RoutingTable
 
 from Packet import Packet
 
+scale_down = 0.7
 pkts = dict()
 
-radius = 50
+radius = int(50 * scale_down)
 
 nodes = list()
 
@@ -167,12 +168,12 @@ colors = [
 ]
 
 position = [
-    (650, 150),
-    (650, 450),
-    (1250, 450),
-    (1250, 150),
-    (1250, 750),
-    (650, 750),
+    (int(650 * scale_down), int(150 * scale_down)),
+    (int(650 * scale_down), int(450 * scale_down)),
+    (int(1250 * scale_down), int(450 * scale_down)),
+    (int(1250 * scale_down), int(150 * scale_down)),
+    (int(1250 * scale_down), int(750 * scale_down)),
+    (int(650 * scale_down), int(750 * scale_down)),
 ]
 
 # Initialise routers
