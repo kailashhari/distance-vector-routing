@@ -11,11 +11,11 @@ color = (0, 0, 0)
 
 class RoutingTable:
     def __init__(self, node):
-        if node.x == 650:
-            self.x = 50
+        if node.x == int(650 * scale_down):
+            self.x = int(50 * scale_down)
         else:
-            self.x = 1400
-        self.y = node.y - 100
+            self.x = int(1400 * scale_down)
+        self.y = node.y - int(100 * scale_down)
         self.color = node.color
 
     def draw(self, screen, node):
