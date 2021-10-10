@@ -1,31 +1,30 @@
 import pygame as pg
 
-inf = 25
-
 
 class Packet:
-    def __init__(self, source, dest, vector, hops, time):
+    def __init__(self, source, dest, vector, time):
         self.packet = dict()
-        self.packet["source"] = source.id
-        self.packet["dest"] = dest.id
-
+        self.packet["source"] = source
+        self.packet["dest"] = dest
         new_vector = vector.copy()
 
-        for i in range(len(hops)):
-            if hops[i] == dest.id:
-                new_vector[i] = inf  # Poison reverse
+        # split horizon
+        for i in range(len(source.hops)):
+            if source.hops[i] == dest.id:
+                new_vector[i] = 49  # Poison reverse
 
         self.packet["vector"] = new_vector
+        self.packet["query"] = False
 
         self.source = source
 
         self.start_time = time
 
-        self.time = source.links[dest.id]
+        self.time = source.links[dest]
 
         self.speed = [(dest.x - source.x) / self.time, (dest.y - source.y) / self.time]
 
-    def draw(self, screen, time):
+    def draw(self, screen, time, size):
         pg.draw.circle(
             screen,
             self.source.color,
@@ -33,8 +32,8 @@ class Packet:
                 self.source.x + self.speed[0] * (time - self.start_time),
                 self.source.y + self.speed[1] * (time - self.start_time),
             ),
-            20,
-            20,
+            size,
+            size,
         )
         pg.draw.circle(
             screen,
@@ -43,6 +42,6 @@ class Packet:
                 self.source.x + self.speed[0] * (time - self.start_time),
                 self.source.y + self.speed[1] * (time - self.start_time),
             ),
-            20,
-            5,
+            size,
+            size // 4,
         )

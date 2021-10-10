@@ -1,27 +1,19 @@
 import pygame as pg
 
-inf = 25
-
 
 class Packet:
-    def __init__(self, source, dest, vector, hops, time):
+    def __init__(self, source, dest, vector, time):
         self.packet = dict()
-        self.packet["source"] = source.id
-        self.packet["dest"] = dest.id
-
-        new_vector = vector.copy()
-
-        for i in range(len(hops)):
-            if hops[i] == dest.id:
-                new_vector[i] = inf  # Poison reverse
-
-        self.packet["vector"] = new_vector
+        self.packet["source"] = source
+        self.packet["dest"] = dest
+        self.packet["vector"] = vector
+        self.packet["query"] = False
 
         self.source = source
 
         self.start_time = time
 
-        self.time = source.links[dest.id]
+        self.time = source.links[dest]
 
         self.speed = [(dest.x - source.x) / self.time, (dest.y - source.y) / self.time]
 

@@ -52,7 +52,7 @@ class RoutingTable:
         screen.blit(text, textRect)
         for i in range(1, 7):
             val = node.vector[i - 1]
-            if val == 49:
+            if val == 25:
                 val = "Inf"
             text = font.render(str(val), True, (255, 255, 255), (0, 2, 5))
             textRect = text.get_rect()

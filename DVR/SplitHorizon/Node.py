@@ -23,7 +23,7 @@ class Router:
     def __init__(self, x, y, color):
         self.id = Router.routers
         Router.routers += 1
-        self.vector = [49] * Router.routers
+        self.vector = [25] * Router.routers
         self.hops = ["-"] * Router.routers
         self.vector[self.id] = 0
         self.hops[self.id] = self.id
@@ -37,7 +37,7 @@ class Router:
         self.rt = RoutingTable(self)
 
     def init_again(self):
-        self.vector = [49] * Router.routers
+        self.vector = [25] * Router.routers
         self.vector[self.id] = 0
         self.hops = ["-"] * Router.routers
         self.hops[self.id] = self.id
@@ -51,7 +51,7 @@ class Router:
         self.links[router.id] = cost
 
     def new_route(self):
-        self.vector.append(49)
+        self.vector.append(25)
         self.hops.append("-")
 
     def send_packet(self, time_now):
@@ -111,7 +111,7 @@ class Router:
 
     def remove_link(self, router, time_now):
         print("Link removed from {} to {}".format(self.id, router.id))
-        self.vector[router.id] = 49
+        self.vector[router.id] = 25
         self.hops[router.id] = "-"
         self.neighbors.remove(router)
         self.links.pop(router.id)

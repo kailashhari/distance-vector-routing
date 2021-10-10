@@ -188,10 +188,11 @@ def init_nodes():
         node2.add_link(node1, cost)
 
     link_nodes(nodes[0], nodes[1], 5)
-    link_nodes(nodes[1], nodes[2], 3)
-    link_nodes(nodes[2], nodes[5], 6)
+    link_nodes(nodes[1], nodes[2], 23)
+    link_nodes(nodes[0], nodes[5], 6)
     link_nodes(nodes[2], nodes[4], 4)
     link_nodes(nodes[2], nodes[3], 7)
+    link_nodes(nodes[0], nodes[3], 10)
 
 
 def remove_link(node1, node2, time_now):

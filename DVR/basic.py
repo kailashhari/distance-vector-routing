@@ -29,6 +29,7 @@ class Router:
         self.links = dict()
         self.packets = dict()
 
+    #
     def init_again(self):
         self.vector = [49] * Router.routers
         self.vector[self.id] = 0
@@ -39,10 +40,11 @@ class Router:
 
     def add_link(self, router, cost):
         self.vector[router.id] = cost
-        self.hops[router.id] = self.id
+        self.hops[router.id] = router.id
         self.neighbors.append(router)
         self.links[router.id] = cost
 
+    #
     def new_route(self):
         self.vector.append(49)
         self.hops.append("-")
@@ -74,7 +76,7 @@ class Router:
             if len(self.packets) == len(self.neighbors):
                 print("All packets received by {}".format(self.id))
 
-                table = self.vector
+                table = self.vector.copy()
 
                 links = self.links.copy()
                 self.init_again()
@@ -134,7 +136,7 @@ def link_cost(node1, node2):
 def main():
 
     # Initialise routers
-    for i in range(6):
+    for _ in range(6):
         [node.new_route() for node in nodes]
         nodes.append(Router())
 

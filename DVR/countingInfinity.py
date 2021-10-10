@@ -6,7 +6,7 @@ nodes = list()
 
 max_time = 20
 
-inf = 49
+inf = 25
 
 
 def make_packet(source, dest, vector):

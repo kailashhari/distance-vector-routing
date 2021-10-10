@@ -16,9 +16,10 @@ def make_packet(source, dest, vector, hops):
 
     new_vector = vector.copy()
 
+    # split horizon
     for i in range(len(hops)):
         if hops[i] == dest:
-            new_vector[i] = inf
+            new_vector[i] = inf  # Poison reverse
 
     packet["vector"] = new_vector
     return packet
@@ -83,7 +84,7 @@ class Router:
             if len(self.packets) == len(self.neighbors):
                 print("All packets received by {}".format(self.id))
 
-                table = self.vector
+                table = self.vector.copy()
 
                 links = self.links.copy()
                 self.init_again()
